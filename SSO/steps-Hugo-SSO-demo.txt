@@ -1,0 +1,48 @@
+GIT : https://github.com/jbossdemocentral/3scale-security-oidc-demo
+https://developers.redhat.com/blog/2017/11/21/setup-3scale-openid-connect-oidc-integration-rh-sso/
+
+
+1. Setup the environment. Login as a cluster admin and create the required templates.
+
+
+oc login -u system:admin
+oc create -f https://raw.githubusercontent.com/jboss-openshift/application-templates/ose-v1.4.7/jboss-image-streams.json -n openshift
+for i in {https,mysql,mysql-persistent,postgresql,postgresql-persistent}; do oc create -f https://raw.githubusercontent.com/jboss-openshift/application-templates/ose-v1.4.7/sso/sso71-$i.json -n openshift; done
+
+2. Create project for Red Hat Single Sign On.
+
+
+$ oc new-project rh-sso --display-name='Red Hat Single Sign On -new'
+$ oc create -f https://raw.githubusercontent.com/jboss-openshift/application-templates/ose-v1.4.7/secrets/sso-app-secret.json -n rh-sso-test1
+$ oc policy add-role-to-user view system:serviceaccount:rh-sso:sso-service-account
+$ oc new-app sso71-mysql-persistent -p HTTPS_NAME=jboss -p HTTPS_PASSWORD=mykeystorepass -p SSO_ADMIN_USERNAME=keyadmin2 -p SSO_ADMIN_PASSWORD=keypassword2
+
+extra step to fix the POD loopBack issue:
+oc volume dc/sso --add --claim-size 512M --mount-path /opt/eap/standalone/configuration/standalone_xml_history --name standalone-xml-history
+
+3. Create project for API Implementation.
+
+$ oc new-project service --display-name='Alert Center Backend Service'
+$ oc process -f https://raw.githubusercontent.com/jbossdemocentral/3scale-security-oidc-demo/master/support/templates/amq63-basic-template.json -p MQ_USERNAME=admin -p MQ_PASSWORD=admin | oc create -f -
+$ oc process -f https://raw.githubusercontent.com/jbossdemocentral/3scale-security-oidc-demo/master/support/templates/accidentalert-backend-template.json -p APP_NAME=accidentalert-backend -p GIT_REPO=https://github.com/jbossdemocentral/3scale-security-oidc-demo.git -p GIT_REF=master -p CONTEXT_DIR=/projects/myaccidentalert -p ACTIVEMQ_BROKER_USERNAME=admin -p ACTIVEMQ_BROKER_PASSWORD=admin -p CPU_REQUEST=1 -p MEMORY_REQUEST=512Mi -p MEMORY_LIMIT=1024Mi | oc create -f -
+
+extra steps :import FIS image : 
+oc import-image fis-java-openshift --from=registry.access.redhat.com/jboss-fuse-6/fis-java-openshift --all  --confirm -n openshift
+
+not required: oc rollout latest accidentalert-backend
+
+4.Create project for ui app. Replace the URL env vars with your actual environment hostnames.
+
+$ oc new-project www
+$ oc process -f https://raw.githubusercontent.com/jbossdemocentral/3scale-security-oidc-demo/master/support/templates/accidentalert-ui-template.json -p SSO_URL='https://secure-sso-rh-sso.apps.d2a7.openshift.opentlc.com' -p BACKEND_URL='http://accidentalert-backend-service.apps.d2a7.openshift.opentlc.com' -p APPLICATION_HOSTNAME='www-accidentalert-ui.apps.d2a7.openshift.opentlc.com' | oc create -f -
+
+
+5. Create project for 3scale.
+
+$ oc new-project threescale
+$ oc new-app -f https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/2.1.0-GA/amp/amp.yml --param WILDCARD_DOMAIN=13.251.251.251.nip.io --param ADMIN_PASSWORD=password --param WILDCARD_POLICY=Subdomain
+
+=========== configuration =========
+
+www : existing route : www-accidentalert-ui.apps.d2a7.openshift.opentlc.com
+new : www-accidentalert-ui.54.169.184.144.nip.io

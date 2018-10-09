@@ -1,0 +1,96 @@
+Edit the docker registry :
+
+1. OCP master node add following in /etc/sysconfig/docker file 
+
+added : --insecure-registry docker-registry-default.13.251.251.251.nip.io --insecure-registry docker-registry.default.svc:5000 --insecure-registry 172.30.1.1:5000'
+example :
+----
+OPTIONS='--selinux-enabled --log-driver=journald --signature-verification=false --insecure-registry 172.30.0.0/16 --insecure-registry docker-registry-default.13.251.251.251.nip.io --insecure-registry docker-registry.default.svc:5000 --insecure-registry 172.30.1.1:5000'
+---
+
+2. add registries in /etc/containers/registries.conf
+
+example : registries = ['docker-registry.default.svc:5000']
+
+****************************
+In desktop or laptop where internet and OCP cluster can be accessed follow the steps :
+****************************
+
+export rh_reg=registry.access.redhat.com
+export my_reg=docker-registry-default.13.251.251.251.nip.io
+
+
+oc new-project mli-dev
+
+->Vinay Git : 
+	wget https://raw.githubusercontent.com/VinayBhalerao/3scale-on-prem-install/master/resources/amp.yml --no-check-certificate
+->OCP templet:
+
+	//wget https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/master/amp/amp.yml 
+
+
+oc new-project  rhscl
+oc new-project  3scale-amp22
+oc project mli-dev
+oc policy add-role-to-user system:image-puller system:serviceaccount:mli-dev:default -n 3scale-amp22
+oc policy add-role-to-user system:image-puller system:serviceaccount:mli-dev:default -n rhscl
+docker login -u $(oc whoami) -p $(oc whoami -t) $my_reg
+
+alias get_rh_img_list="cat amp.yml | grep  -o 'registry.access[^ ]*' | sed -e 's/\"//'"
+alias get_image_names="get_rh_img_list | sed 's/'"$rh_reg"'//' | sed 's/^\///g'"
+get_rh_img_list | xargs -n 1 docker pull
+get_image_names | xargs -I '{}' docker tag  $rh_reg/'{}' $my_reg/'{}'
+
+get_image_names | xargs -I '{}' docker push $my_reg/'{}'
+
+export reg_ip=$(oc get svc docker-registry -n default --no-headers | awk '{ print $3}')
+cat amp.yml  | sed 's/'"$rh_reg"'/'"$reg_ip"':5000/g'  | oc process -p WILDCARD_DOMAIN=13.251.251.251.nip.io -f amp.yml | oc apply -f-
+
+
+///////////
+
+
+---------------
+Resume / rollout POD's 
+----------------
+
+1. Resume database tier pods
+
+for x in backend-redis system-memcache system-mysql system-redis zync-database; do echo Resuming dc:  $x; sleep 2; oc rollout resume dc/$x; done
+
+Verify all pods are running
+
+oc get pods
+
+2. Resume backend listener and worker deployments:
+
+for x in backend-listener backend-worker; do echo Resuming dc:  $x; sleep 2; oc rollout resume dc/$x; done
+
+3. Resume the system-app and its two containers:
+
+oc rollout resume dc/system-app
+
+4. Resume additional system and backend application utilities:
+
+for x in system-resque system-sidekiq backend-cron system-sphinx; do echo Resuming dc:  $x; sleep 2; oc rollout resume dc/$x; done
+
+5. Resume apicast gateway deployments:
+
+for x in apicast-staging apicast-production; do echo Resuming dc:  $x; sleep 2; oc rollout resume dc/$x; done
+
+6. Resume remaining deployments:
+
+for x in apicast-wildcard-router zync; do echo Resuming dc:  $x; sleep 2; oc rollout resume dc/$x; done
+
+
+downlaod commands to customer:
+______________________________
+
+export rh_reg=registry.access.redhat.com
+export my_reg=< your DEV OCP docker Registry. example :docker-registry-default.13.251.251.251.nip.io>
+
+wget https://raw.githubusercontent.com/3scale/3scale-amp-openshift-templates/master/amp/amp.yml --no-check-certificate
+
+alias get_rh_img_list="cat amp.yml | grep  -o 'registry.access[^ ]*' | sed -e 's/\"//'"
+alias get_image_names="get_rh_img_list | sed 's/'"$rh_reg"'//' | sed 's/^\///g'"
+get_rh_img_list | xargs -n 1 docker pull

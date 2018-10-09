@@ -1,0 +1,196 @@
+ref : https://developers.redhat.com/blog/2017/11/21/setup-3scale-openid-connect-oidc-integration-rh-sso/
+Tom coroner : https://github.com/tnscorcoran/rhsso-3scale
+
+3Scale Integration --> AUTHENTICATION SETTINGS --> OpenID Connect Issuer:
+
+http://3scale-admin:b42bd2cd-4a3b-441c-a8d6-b1fba2e2ff2b@sso-rh-sso-16ca.apps.rhpds.openshift.opentlc.com/auth/realms/insurance
+
+here b42bd2cd-4a3b-441c-a8d6-b1fba2e2ff2b from SSO --> clients--> 3Scale-admin-->credentials
+
+realam echo : 
+admin/admin
+------
+http://3scale-admin:<CLIENT-SECRET>@sso-rh-sso.<YOUR-CDK-IP>.nip.io/auth/realms/3scale-sso
+http://3scale-admin:5288acb6-ab7b-4560-be00-539e1f53b5a6@sso-rh-sso.16ca.apps.rhpds.openshift.opentlc.com/auth/realms/Echo
+d61508a3-f0c5-40e0-911c-230bf4dbaaa3
+curl --insecure -v curl --insecure -v https://api-3scale-apicast-production.16ca.apps.rhpds.openshift.opentlc.com:443 2>&1 | awk 'BEGIN { cert=0 } /^\* Server certificate:/ { cert=1 } /^\*/ { if (cert) print }' 2>&1 | awk 'BEGIN { cert=0 } /^\* Server certificate:/ { cert=1 } /^\*/ { if (cert) print }'
+
+
+Client ID	4183f056
+Client Secret	
+4f5bad1bf5df37d15acea87d0c14b42f
+
+Postman URL :
+Auth URL:         http://sso-rh-sso.<YOUR-OPENSHIFT-IP>.nip.io/auth/realms/3scale-sso/protocol/openid-connect/auth
+Access Token URL: http://sso-rh-sso.<YOUR-OPENSHIFT-IP>.nip.io/auth/realms/3scale-sso/protocol/openid-connect/token
+
+https://sso-rh-sso.16ca.apps.rhpds.openshift.opentlc.com/auth/realms/Echo/protocol/openid-connect/auth
+
+https://sso-rh-sso.16ca.apps.rhpds.openshift.opentlc.com/auth/realms/Echo/protocol/openid-connect/token
+
+
+realam 3Scale-sso :
+apiuser/apipassword
+------
+3scale-admin : 5dfc68e3-17ff-4a7e-b3bd-70a56dfcdad3
+3Scale-Dev-portal-client : c05259ca-925c-4946-808f-375f8534308a
+Developer access code : 65dadc85e8
+develoer SSO - key : a390ba415c793e1a39f4ef1130a73a14
+integration SSO uRL : https://3scale-admin:5dfc68e3-17ff-4a7e-b3bd-70a56dfcdad3@secure-sso-rh-sso-16ca.apps.rhpds.openshift.opentlc.com/auth/realms/3scale-sso
+                      http://3scale-admin:5dfc68e3-17ff-4a7e-b3bd-70a56dfcdad3@sso-rh-sso-16ca.apps.rhpds.openshift.opentlc.com/auth/realms/3scale-sso
+API Gateway : 
+1091107697ec0f41c8f4ac583959ddf49045f212dbd9dd2e27a330310f1b95fc
+Client ID	20b0c48c
+Client Secret	
+
+0dd833d61fc9820aea63267b008e48d0
+
+Postman URL :
+Auth URL:         http://sso-rh-sso.<YOUR-OPENSHIFT-IP>.nip.io/auth/realms/3scale-sso/protocol/openid-connect/auth
+Access Token URL: http://sso-rh-sso.<YOUR-OPENSHIFT-IP>.nip.io/auth/realms/3scale-sso/protocol/openid-connect/token
+
+
+
+http://sso-rh-sso-16ca.apps.rhpds.openshift.opentlc.com/auth/realms/3scale-sso/protocol/openid-connect/auth
+
+http://sso-rh-sso-16ca.apps.rhpds.openshift.opentlc.com/auth/realms/3scale-sso/protocol/openid-connect/token
+
+initial access token :
+eyJhbGciOiJSUzI1NiIsImtpZCIgOiAiMVhoLWFWc20yeEpvaHU4ZVRESmwxNkRVZWtYdFhFZ0ZtSm9KVlNUUVo0byJ9.eyJqdGkiOiJkMzE2ODU1ZS0xYmIzLTRlNjktYTY5MC01OWU5ZGMwNjU1ZGEiLCJleHAiOjE2MTg3MjQyMjMsIm5iZiI6MCwiaWF0IjoxNTMyNDEwNjIzLCJpc3MiOiJodHRwczovL3NlY3VyZS1zc28tcmgtc3NvLTE2Y2EuYXBwcy5yaHBkcy5vcGVuc2hpZnQub3BlbnRsYy5jb20vYXV0aC9yZWFsbXMvM3NjYWxlLXNzbyIsImF1ZCI6Imh0dHBzOi8vc2VjdXJlLXNzby1yaC1zc28tMTZjYS5hcHBzLnJocGRzLm9wZW5zaGlmdC5vcGVudGxjLmNvbS9hdXRoL3JlYWxtcy8zc2NhbGUtc3NvIiwidHlwIjoiSW5pdGlhbEFjY2Vzc1Rva2VuIn0.QpzEJ8RujlmwHMLYGyOiD8uwo1fn79djQaUcoVFEHp-6AOctA3axFrec2hQ0fCMZICLFEXf4-FHHO2VVJY1ghpLZRRTt-2Ah3MSHzyPXTl63oYl_kd1CZ9nZaoC42vgyECoxOdCcrr5PDvun-rombt6pOo-ASm_UZtuQe6KBEV9oSNqRbKLh6pG_lIMBRY_yFHh1WeY-3csgw7GdF-Ecy7nG0onJeUtCRhZasduJUi0spthVJNFeKTGQ42vlf054JC9Ggjei7JBeZ62f5q-Bc1s_IX51NMx110GuBHRO5IcnNAJ3A0aljsNTFMTBbYdtoRo1rjccfWt3Mpooq2_20A
+
+http://sso-rh-sso-16ca.apps.rhpds.openshift.opentlc.com/auth/realms/3scale-sso
+https://secure-sso-rh-sso-16ca.apps.rhpds.openshift.opentlc.com/auth/realms/3scale-sso
+
+CDK env:
+=========== 14e342c0-0abc-41a2-9ceb-b8709555d708
+3scale-admin : 14e342c0-0abc-41a2-9ceb-b8709555d708
+3Scale-Dev-portal-client : 846cc073-c6ba-4a3c-a220-763858edb88b
+Developer access code : e77ac884
+develoer user - key : 7d362c925572514692427c3b5c633458
+integration SSO uRL : https://3scale-admin:14e342c0-0abc-41a2-9ceb-b8709555d708@secure-sso-rh-sso.13.251.251.251.nip.io/auth/realms/3scale-sso
+                      http://3scale-admin:14e342c0-0abc-41a2-9ceb-b8709555d708@sso-rh-sso.13.251.251.251.nip.io/auth/realms/3scale-sso
+                      
+
+
+
+Client ID	c456186c
+Client Secret	b51bdc07dc12ea85c4a62c6043b3be2b
+
+Postman URL:
+http://sso-rh-sso.13.251.251.251.nip.io/auth/realms/3scale-sso/protocol/openid-connect/auth
+
+http://sso-rh-sso.13.251.251.251.nip.io/auth/realms/3scale-sso/protocol/openid-connect/token
+
+3Scale-Dev-portal-client redirect URL:
+
+https://3scale.13.251.251.251.nip.io
+
+
+https://developers.redhat.com/blog/2017/11/21/setup-3scale-openid-connect-oidc-integration-rh-sso/
+
+*************************************************************************************************
+-------------------------- Working Product service  -------
+SSO login : kayadmin/keypasswod
+
+New SSO login : kayadmin1/keypasswod1
+
+Client ID	ce57c98a
+Client Secret	
+882b90a4c5441f26e0bd182e01b88246
+
+http://3scale-admin:c4759622-06b0-4964-8974-2e7a149f3c62@sso-rh-sso-new.13.251.251.251.nip.io/auth/realms/3scale-dev
+     
+curl https://3scale-admin:c4759622-06b0-4964-8974-2e7a149f3c62@secure-sso-rh-sso-new.13.251.251.251.nip.io/auth/realms/3scale-dev/protocol/openid‐connect/token ‐v ‐H "Content‐Type:application/x‐www‐form‐urlencoded" ‐d
+
+
+
+http://sso-rh-sso-new.13.251.251.251.nip.io/auth/realms/3scale-dev/protocol/openid-connect/auth
+
+http://sso-rh-sso-new.13.251.251.251.nip.io/auth/realms/3scale-dev/protocol/openid-connect/token
+
+This is not working :  
+curl ‐X GET --header 'Accept: application/json' 'https://products-system-user1-3scale-apicast-production.13.251.251.251.nip.io:443/rest/services/products' ‐H 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICIycEhwbl9MN3R2Znp0UGlrdmtHQzdIYVRRek5RX3IzWmJyVU5jeFRZamxZIn0.eyJqdGkiOiJkNzA4NTE1OS0wNzRlLTQ2MTEtYTIzZC00ZTE4YzczNjcyODYiLCJleHAiOjE1MzQ4NDczNzMsIm5iZiI6MCwiaWF0IjoxNTM0NDE1MzczLCJpc3MiOiJodHRwOi8vc3NvLXJoLXNzby1uZXcuMTMuMjUxLjI1MS4yNTEubmlwLmlvL2F1dGgvcmVhbG1zLzNzY2FsZS1kZXYiLCJhdWQiOiJjZTU3Yzk4YSIsInN1YiI6IjVlZTBhYmU3LWJiOWUtNDIzNC1iMjViLTgxYWY0NGNlYTBiYSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImNlNTdjOThhIiwiYXV0aF90aW1lIjoxNTM0NDE0ODI1LCJzZXNzaW9uX3N0YXRlIjoiYzM2YmZjNmItZmYyOS00NTE3LTlhMzgtYjQ2MWQ3YTU1ODE5IiwiYWNyIjoiMCIsImNsaWVudF9zZXNzaW9uIjoiMTE4NjBmYTAtNDRkOS00ZjNiLTgyODAtMDhiMjM0MDdjZWNjIiwiYWxsb3dlZC1vcmlnaW5zIjpbXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsInZpZXctcHJvZmlsZSJdfX0sIm5hbWUiOiIiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJhZG1pbiJ9.Ux0XXqRCkpmZfCqGO7rQABERNcy6Yg2komMBZeyaQ6o46Ay4B4_5cGWINaGe1CTM2jaS0hbAsJtgIZQNcZt9K80oUU4UwFXJIxPBUzlKnCPmjxeQFbK5LOSwbJkyWTjErmqVgCilESFDJblDMT0JNzEc0teBXlV2yrCkolzwvcKIbeJ8y27mv3BHXWAavt_JGGz-uEM__h12z6LQrr0L5LPW_qcqGCEhxMihNA0uemsQA_NK-MCjXpK-hTu8s2zeL5zwgf9wcuZsPSNMxRVs1Hc5RYw3j3cduAmqxXdjsKF8C5q1UTJxoL8PioQKtybGXJhHqbLzy1UYDRKEj6iHvw' ‐H 'Cache‐Control: no‐cache'
+ 
+
+Dev Portal and SSO integration :
+------------------------------
+
+follow : https://github.com/tnscorcoran/rhsso-3scale
+**SSO **
+Root URL : https://user1-3scale.13.251.251.251.nip.io
+						
+Valid Redirect URIs: https://user1-3scale.13.251.251.251.nip.io*
+
+
+** 3Scale **
+
+Client ID* : whatever configured in SSO. ex: 3scale-dev-portal
+Client Secret*: copy from SSO clit : 3scale-dev-portal-client ex: 6493fd34-84c5-47fe-967f-ddd9db79607b
+Realm* : http://sso-rh-sso-new.13.251.251.251.nip.io/auth/realms/3scale-dev
+				sso-rh-sso-new.13.251.251.251.nip.io/auth/realms/3scale-dev
+check(checkbox) "Do not verify SSL certificate"
+
+
+---------------------------------
+
+3Scale Admin portal integration :
+------------------
+https://mojo.redhat.com/groups/integration-community-of-practice/blog/2018/08/13/securing-3scale-admin-portal-with-rhsso
+
+**SSO **
+Root URL : https://user1-3scale-admin.13.251.251.251.nip.io/
+						
+Valid Redirect URIs: https://user1-3scale-admin.13.251.251.251.nip.io/*
+
+** 3Scale **
+
+Client ID* : whatever configured in SSO. ex: 3scale-admin-portal
+Client Secret*: copy from SSO clit : 3scale-admin-portal ex: 506d5560-93ac-492f-8397-ba639cb8a780
+Realm* : http://sso-rh-sso-new.13.251.251.251.nip.io/auth/realms/3scale-dev
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------- Jmeter testing ---------
+https://github.com/3scale/jmeter-benchmark
+
+TEST_PLAN=test-plan.jmx \
+  USER=centos THREADS="300" \
+  INJECTOR_HOST="injector_host" \
+  DURATION=300 \
+  TARGET_HOST="target_host" \
+  TARGET_HOST_HEADER="target_host" \
+  PROTOCOL="https" \
+  TARGET_PORT="443" \
+  RPS=500  \
+  TARGET_PATH="/echo-api.3scale.net/echo?user_key=a390ba415c793e1a39f4ef1130a73a14" make run_benchmark
+  
+  curl testing : 
+  -------------
+  1. Get OAuth token form SSO : 
+   $curl
+ https://<CLIENT_ID>:<CLIENT_SECRET>@<SECURE‐ROUTE‐SSO‐URL>/auth/realms/<REALM>/protoc
+ ol/openid‐connect/token ‐v ‐H "Content‐Type: application/x‐www‐form‐urlencoded"   ‐d
+ 
+ 2. Use the access token as bearer authentication to call API:
+ 
+ curl ‐X <HTTP_METHOD> \
+ <API_CAST_URL> \
+ ‐H 'Authorization: Bearer <ACCESS_TOKEN>' \
+ 
+  
+  
+  

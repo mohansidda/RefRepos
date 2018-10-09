@@ -1,0 +1,116 @@
+
+3Scale On-Premise Deployment
+=================================
+
+
+https://docs.google.com/document/d/108XMlMmhmDaKDKRP2jhWbqod5MHC_m7UITFNHxP9q0M/edit#heading=h.alur0o3c623x
+https://docs.google.com/document/d/108XMlMmhmDaKDKRP2jhWbqod5MHC_m7UITFNHxP9q0M/edit#heading=h.33lal4rtvgoq (my drive)
+why more VM and less vCores?
+
+Review : 
+1. Sizing recommendations based on the TPS?
+2. Performance testing scope
+3. can we elaborate "Service Integration" ? what are the products (Fuse/AMQ..etc) we will be using in Service Integration
+4. can we hi-light usage of Rides cache   
+5. Service 6 Disaster Recovery 3Scale Deployment - effort : 4 days looks aggressive. 
+6. Service 10 DEV+SIT+UAT 3Scale Deployment (2 MD ITG) - effort : 4 days looks aggressive. 
+
+
+Service 1 3Scale Design Workshop (5 MD RH)
+=================================
+Discuss and verify the requirements and assumptions for the infrastructure. 
+Verify the architectural design is supported for Metrobank infrastructure and requirements.
+Discuss and document the service enrichment requirement for backend application services integration.  
+Discuss and document the Developer Portal and APICast Gateway customization requirements and scope.
+Provide assistance and recommendations on the architecture design and services design using OpenShift. 
+Discuss and provide advice on OpenShift application logging mechanism.
+Discuss with the customer to understand Red Hat SSO integration, Metrobank existing Ms AD, any 3rd party authentication providers and SSO requirements.
+Prepare and review design documentation for the proposed solution.
+Metrobank design: https://docs.google.com/document/d/1NrF8Pe1EJseEYDPmrxH2_qgkSJbHF8JxCHF4BMpkBjc/edit?usp=sharing
+
+good presentations :
+=================================
+https://docs.google.com/presentation/d/1-2dlE-32Pwec1ZQJrJgCJoP1koSkvKNy-lNf6LjAEMs/edit#slide=id.g25e4f579dc_0_2095
+
+AMP2.2 : https://docs.google.com/presentation/d/1kmOtdN4KJY5PArYqYVgdZvPs9BMP1s2yGkMnsyOu1PU/edit#slide=id.g226083325a_0_0
+AMP 2.1 :https://docs.google.com/presentation/d/1kmOtdN4KJY5PArYqYVgdZvPs9BMP1s2yGkMnsyOu1PU/edit?ts=59b12220#slide=id.g250d078e35_1_0
+TOM recording : https://drive.google.com/drive/folders/11bwB0YNrHZMzazNGE2_eCcgUzgt9Uk93
+ToM sent blogs : 
+https://mojo.redhat.com/people/hguerrer/blog/2017/05/17/how-to-setup-a-3scale-amp-on-premise-all-in-one-install
+https://www.redhat.com/cms/managed-files/mi-deploying-3scale-api-on-openshift-ebook-f7900-201706-en.pdf
+
+OCP setting in local : https://mojo.redhat.com/people/akhairna/blog/2017/08/08/openshift-setup-and-deployment
+
+SSO setup for 3-scale : https://access.redhat.com/documentation/en-us/red_hat_3scale/2.1/html-single/accounts/index#tokens
+
+OAth configuration. :https://github.com/3scale/apicast/blob/master/doc/oauth-guide.md
+
+Custom Signature : https://github.com/jkeys089/lua-resty-hmac
+
+audit logging : https://github.com/nmasse-itix/apicast-logger
+Oracle Database 12.2+
+
+BCA chats : 
+
+https://www.lucidchart.com/documents/edit/7eed84c6-cdee-4c0a-a96e-1107cf735301/0
+
+
+
+Promotion / Reploication of Servcies
+https://github.com/3scale/3scale_toolbox
+
+This OAuth 2.0 flow with 3scale as Authorization Server, and using an additional shared Redis for the APIcast gateways, is planned to be deprecated in future
+Only existing customers should use this flow (and where useful the diagram to help to troubleshoot)
+All new customers should automatically use OpenID Connect (OIDC) with the Red Hat SSO as the Authorization Server as the future-proof solution (covering all key Oauth 2.0 flows with JWT as the token type)
+Customers who want to use a 3rd party IdP can do so if they are OIDC-compliant either using RH-SSO as a broker or by integrating 3scale directly (a customization today which will be more easily configured in future)
+
+---- from Aditya ---AMP2.1 setup  :
+https://access.redhat.com/documentation/en-us/red_hat_3scale/2.1/html-single/infrastructure/#onpremises-installation
+oc new-project <project_name>
+
+oc new-app --file /path/to/amp.yml --param WILDCARD_DOMAIN=<WILDCARD_DOMAIN>
+
+-----
+
+
+APICast - selfe managed : 
+----------
+http://mrdreambot.ddns.net/exposing-fis-based-service-as-a-3scale-api-my-learning-journey-part-1/
+https://github.com/3scale/apicast
+
+OpenShift lab playbook
+https://github.com/gpe-mw-training/OpenShift-Lab/blob/master/roles/3scale/tasks/main.yml
+
+https://gist.github.com/jbride/577168fd7b1a2f6b804b32c6acf0b40e
+
+APICost - logging :
+https://github.com/nmasse-itix/apicast-logger
+
+Mojo 3Scale FAQ : 
+
+https://mojo.redhat.com/docs/DOC-1104042#jive_content_id_Q_What_are_the_system_requirements_for_3scale_AMP_20
+
+Chakra Git  : https://github.com/debianmaster/openshift-examples/tree/master/3scale-api-gateway
+Vinay Git : https://github.com/VinayBhalerao/3scale-on-prem-install
+
+Daria's Git for APICast deploying in OCP : 
+https://github.com/3scale/apicast/blob/master/doc/openshift-guide.md
+
+3Scale GIT repositry for all Yaml files : 
+https://github.com/gpe-mw-training/3scale_onpremise_implementation_labs.git
+Tom coroner : https://github.com/tnscorcoran/rhsso-3scale
+
+OAuth + Open ID ; https://www.youtube.com/watch?v=996OiexHze0
+
+Henrique : 3FORA : https://github.com/viecili/3fora/blob/master/3fora-docs/src/docs/asciidoc/infrastructure.adoc
+Tom Git : https://github.com/tnscorcoran/rhsso-3scale
+
+API-Led Pilot - Offering Definition Document:
+https://mojo.redhat.com/docs/DOC-1146072
+
+3Scale AMP 2.2 Billing  & demo : https://docs.google.com/presentation/d/1hC7O4YmfD8EbxTWOysT51Kd3PYMT2fqnv-sX6wrVRNY/edit#slide=id.g378a6897c9_0_23
+
+3scale APIcast openid connect with rh sso: https://www.lucidchart.com/documents/edit/4d61d93f-49ee-4c6d-80e6-123999e6acf9/1
+
+
+billing : https://docs.google.com/presentation/d/1hC7O4YmfD8EbxTWOysT51Kd3PYMT2fqnv-sX6wrVRNY/edit#slide=id.p17

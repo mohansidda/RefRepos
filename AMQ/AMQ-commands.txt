@@ -1,0 +1,260 @@
+Active-MQ 7 installation : 
+
+http://activemq.apache.org/getting-started.html#GettingStarted-UsingHomebrewinstalleronOSX
+
+
+1. Create broker instances :
+./artemis create --user admin --password password --role admin --allow-anonymous y /usr/local/Cellar/jboss-amq-7.0.0.redhat-1/instances/mybroker
+
+from Shyam :
+------>
+./bin/artemis create /data/redhat/amquat --user amqadmin --password xxxxxx --role admin --require-login --name amquat
+
+./bin/artemis user add --user amqusr --password xxxxxx --role appusr
+
+<--------
+
+
+2. run : 
+---
+ou can now start the broker by executing:
+
+   "/usr/local/Cellar/jboss-amq-7.0.0.redhat-1/instances/mybroker/bin/artemis" run
+
+Or you can run the broker in the background using:
+
+   "/usr/local/Cellar/jboss-amq-7.0.0.redhat-1/instances/mybroker/bin/artemis-service" start
+
+3. Route Address :
+./artemis queue create --name sampleQueue --address pocAddress --anycast --durable --purge-on-on-consumers --auto-create-address
+
+4. create a queue in a route ;
+./artemis queue create --name sampleQueue --address pocAddress --anycast --durable --purge-on-no-consumers --auto-create-address
+
+------ test: producer and Consumer --------
+----->
+	1.normal test 
+
+./artemis producer --destination pocAddress --message-count 10 --message-size 10 --sleep 1000 --threads 2 --url tcp://$HOSTNAME:61616
+
+
+./artemis consumer --destination sampleQueue --url tcp://$HOSTNAME:61616 --message-count 1
+./artemis consumer --destination sampleQueue --url tcp://$HOSTNAME:61616 (to consume all msg)
+
+2. page testing 
+./bin/artemis producer --destination pocAddress --threads 1 --sleep 10 --url tcp://$HOSTNAME:61616 --message-count 1500 --message-size 100000 --user amdin --password root
+
+
+./bin/artemis consumer --destination sampleQueue --url tcp://$HOSTNAME:61616 --message-count 1500 --user admin --password root
+
+<--------
+
+
+mvn clean package exec:java \
+          -Dexec.mainClass="org.apache.activemq.artemis.jms.example.AMQPQueueExample" \
+          -DQUEUE_NAME="pocAddress" \
+          -DCONNECTION_URL="amqp://localhost:5672" \
+          -Dexec.cleanupDaemonThreads=false -X
+          
+          
+          
+#################### PRD Conficuration ######################################
+ 
+ Master : 
+
+ 1-> creating broker instances :
+ ./artemis create /usr/local/Cellar/jboss-amq-7.0.0.redhat-1/instances/PRD-Master --replicated --failover-on-shutdown --user admin --password root --role admin --require-login --clustered --host $HOSTNAME --name PRD-Master --cluster-user msidda --cluster-password ***** --max-hops 1
+2-> adding app user and role
+ ./bin/artemis user add --user amqusr --password amqusr --role appusr
+ 
+ 3.-> validate  appusr has the following acl in broker.xml :
+          </security-setting>
+            <security-setting match="#">
+            <permission type="createNonDurableQueue" roles="appusr"/>
+            <permission type="deleteNonDurableQueue" roles="appusr"/>
+            <permission type="createDurableQueue" roles="appusr"/>
+            <permission type="deleteDurableQueue" roles="appusr"/>
+           <!-- <permission type="createAddress" roles="appusr"/>
+            <permission type="deleteAddress" roles="appusr"/>
+            -->
+            <permission type="consume" roles="appusr"/>
+            <permission type="browse" roles="appusr"/>
+            <permission type="send" roles="appusr"/>
+            <!-- we need this otherwise ./artemis data imp wouldn't work -->
+            <permission type="manage" roles="appusr"/>
+         </security-setting>
+      </security-settings>
+    
+ 3-> creating address
+ ./bin/artemis address create --name RH.PRD.LoanProcess --anycast --no-multicast --url tcp://$HOSTNAME:61617 --user admin --password root
+ 
+ 4-> creating a durable queue :
+ 
+ ./bin/artemis queue create --name RH.PRD.LoanProcess.queue --address RH.PRD.LoanProcess --anycast --durable --preserve-on-no-consumers --auto-create-address --url tcp://$HOSTNAME:61617 --user admin --password root
+
+ ////////////////
+ 
+ Slave :
+ 
+  ./artemis create /usr/local/Cellar/jboss-amq-7.0.0.redhat-1/instances/PRD-Slave --replicated --failover-on-shutdown --slave --user admin --password root --role admin --require-login --clustered --host $HOSTNAME --name PRD-Slave --cluster-user msidda --cluster-password ***** --max-hops 1 --port-offset 100
+  
+2-> adding app user and role
+ ./bin/artemis user add --user amqusr --password amqusr --role appusr
+ 
+
+ 
+ HA/Cluster setup :
+ ------------
+ 
+ update Master broker.xml : 
+ 
+  1->
+ updating connecters : 
+     <connectors>
+    <!-- Connector used to be announced through cluster connections and notifications -->
+        <connector name="PRD-Master">tcp://msidda-OSX.local:61617</connector>
+        <connector name="PRD-Slave">tcp://msidda-OSX.local:61716</connector>
+    </connectors>
+ 
+ 2->
+ Change the accepter appropriate name : 
+<acceptor name="PRD-Master">tcp://msidda-OSX.local:61617?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=CORE,AMQP,STOMP,HORNETQ,MQTT,OPENWIRE;useEpoll=true;amqpCredits=1000;amqpLowCredits=300</acceptor>
+
+ 
+ 3->
+ comment 	<broadcast-groups> and  <discovery-groups> sections. Ex :
+ 
+<!--
+	<broadcast-groups>
+         <broadcast-group name="bg-group1">
+            <group-address>231.7.7.7</group-address>
+            <group-port>9876</group-port>
+            <broadcast-period>5000</broadcast-period>
+            <connector-ref>artemis</connector-ref>
+         </broadcast-group>
+      </broadcast-groups>
+
+      <discovery-groups>
+         <discovery-group name="dg-group1">
+            <group-address>231.7.7.7</group-address>
+            <group-port>9876</group-port>
+            <refresh-timeout>10000</refresh-timeout>
+         </discovery-group>
+      </discovery-groups>
+-->
+ 
+ 4->
+ commet the discovery-group in <cluster-connections> section :
+ 
+  <!-- <discovery-group-ref discovery-group-name="dg-group1"/> -->
+  
+  5->
+   update ha-policy : check-for-live-server element to true:
+  
+        <ha-policy>
+         <replication>
+            <master><check-for-live-server>true</check-for-live-server></master>
+         </replication>
+      </ha-policy>
+      
+      
+ 
+ Master test : 
+-------
+./bin/artemis producer --destination RH.PRD.LoanProcess --threads 1 --sleep 10 --url tcp://$HOSTNAME:61617 --message-count 1500 --message-size 100000 --user amqusr --password amqusr
+
+./bin/artemis consumer --destination RH.PRD.LoanProcess.queue --url tcp://$HOSTNAME:61617 --message-count 1500  --user amqusr --password amqusr
+
+Slave Test :
+-----
+./bin/artemis producer --destination RH.PRD.LoanProcess --threads 1 --sleep 10 --url tcp://$HOSTNAME:61716 --message-count 1500 --message-size 100000 --user amqusr --password amqusr
+
+./bin/artemis consumer --destination RH.PRD.LoanProcess.queue --url tcp://$HOSTNAME:61716 --message-count 1500  --user amqusr --password amqusr
+
+
+
+failover:(tcp://msidda-OSX.local:61617,tcp://msidda-OSX.local:61716)?initialReconnectDelay=100
+
+
+
+failover:(tcp://13.228.154.185:61616,tcp://13.228.180.36:61616)?initialReconnectDelay=2
+
+
+
+
+
+
+
+ 
+ SGPost Master test : 
+-------
+./bin/artemis producer --destination RH.PRD.LoanProcess --threads 1 --sleep 10 --url tcp://13.228.180.36:61616 --message-count 1 --message-size 100000 --user amqusr --password '4z!tie2o
+
+./bin/artemis consumer --destination RH.PRD.LoanProcess.queue --url tcp://13.228.180.36:61616 --message-count 1500  --user amqusr --password '4z!tie2o
+
+
+
+./bin/artemis consumer --destination foo1 --url tcp://$HOSTNAME:61616 --user admin --password root
+ 
+ ./bin/artemis consumer --destination foo2 --url tcp://$HOSTNAME:61616 --user admin --password root
+ 
+ ./bin/artemis producer --destination RH.PRD.LoanProcess --threads 1 --sleep 10 --url tcp://$HOSTNAME:61616 --message-count 1 --message-size 100000 --user admin --password root
+
+./bin/artemis consumer --destination foo1 --url tcp://$HOSTNAME:61616 --user admin --password root
+
+ 
+ ********************************************************
+ Cluster - https://redhatworkshops.github.io/amqv7-workshop/60-clustering.html
+ ******************************************************** ---------
+ 
+ $ $AMQ_HOME/bin/artemis create instances/cluster/node1 --name node1 --user admin --password admin --allow-anonymous
+ $AMQ_HOME/bin/artemis create instances/cluster/node2 --name node2 --user admin --password admin --allow-anonymous --port-offset 1
+ 
+ --> add the changes in node 1 -- broker.xml suggested in the above URL.
+ 
+ "/usr/local/Cellar/jboss-amq-7.0.0.redhat-1/instances/cluster-simple/node1/bin/artemis-service" start
+ 
+  --> add the changes in node 2 -- broker.xml suggested in the above URL.
+ 
+ "/usr/local/Cellar/jboss-amq-7.0.0.redhat-1/instances/cluster-simple/node2/bin/artemis-service" start
+ 
+ Testing : 
+ 
+ $AMQ_HOME/bin/artemis producer --verbose --user admin --password admin --sleep 1000 --message-count 100 --url 'tcp://localhost:61616'
+ 
+ $AMQ_HOME/bin/artemis consumer --verbose --user admin --password admin --message-count 100 --url 'tcp://localhost:61617'
+ 
+ Cluster 2: UDP
+****************************
+copied the cluster-jGroups/node1 and node2 from cluster-udp
+
+"/usr/local/Cellar/jboss-amq-7.0.0.redhat-1/instances/cluster-jGroups/node1/bin/artemis-service" start
+ 
+ ./artemis run  'xml:/usr/local/Cellar/jboss-amq-7.0.0.redhat-1/instances/cluster-jGroups/node1/etc/bootstrap.xml'
+ 
+ $AMQ_HOME/bin/artemis producer --url tcp://localhost:61616 --message-count 20 --destination queue://myQueue
+ 
+  $AMQ_HOME/bin/artemis consumer --url tcp://localhost:61617 --destination queue://myQueue --message-count 10
+  
+    $AMQ_HOME/bin/artemis consumer --url tcp://localhost:61616 --destination queue://myQueue --message-count 10
+    
+ Cluster 3: jGroups
+****************************
+
+ $AMQ_HOME/bin/artemis producer --verbose --user admin --password admin --sleep 1000 --message-count 100 --url 'tcp://localhost:61616'
+ 
+ $AMQ_HOME/bin/artemis consumer --verbose --user admin --password admin --message-count 100 --url 'tcp://localhost:61617'
+ 
+ 
+ ./artemis queue create --name TEST --address TestingQueue --auto-create-address --anycast --purge-on-no-consumers false --durable true
+ 
+./artemis queue delete --name TEST
+./artemis address delete --name TestingQueue
+
+./artemis queue stat --queueName=DLQ
+
+curl -v -u admin:admin http://localhost:8161/console/jolokia/read/org.apache.activemq.artemis:broker=%220.0.0.0%22,component=addresses,address=%22TEST%,subcomponent=queues,routing-type=%22anycast%22,queue=%22TEST%22 
+
+curl -v -u admin:admin http://localhost:8161/console/jolokia/read/org.apache.activemq.artemis:broker=220.0.0.0,component=addresses,address=test,subcomponent=queues,routing-type=anycast,queue=test
+
+

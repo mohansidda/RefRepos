@@ -1,0 +1,123 @@
+docker command
+
+docker images
+
+docker container ls
+
+docker exec -it container_id /bin/bash
+
+docker ps -a
+
+
+docker run -i -t centos:latest /bin/bash
+
+docker run -i -t e934aafc2206 /bin/bash
+
+docker run -i -t richxsl/rhel7 /bin/bash
+
+docker exec -it <container> bash
+
+-------- Swagger ---------
+
+docker pull swaggerapi/swagger-editor
+
+docker run -d -p 80:8080 swaggerapi/swagger-editor
+This will run Swagger Editor (in detached mode) on port 80 on your machine, so you can open it by navigating to http://localhost in your browser.
+
+http://localhost:8080
+
+---- Informix -------
+
+docker pull ibmcom/informix-developer-database
+1 - Starting an Informix Docker Container for the First time.
+
+docker run -it --name iif_developer_edition --privileged -p 9088:9088 -p 9089:9089 -p 27017:27017 -p 27018:27018 \
+-p 27883:27883 -e LICENSE=accept ibmcom/informix-developer-database:latest
+
+docker run -it --name iif_developer_edition --privileged -p 9088:9088 -p 9089:9089 -p 27017:27017 -p 27018:27018 \
+-p 27883:27883 -e LICENSE=accept ibmcom/informix-developer-database:latest
+-p, expose port 9088 to allow remote connections from TCP clients
+-p, expose port 9089 to allow remote connections from DRDA clients
+-p, expose port 27017 to allow remote connections from mongo clients
+-p, expose port 27018 to allow remote connections from REST clients
+-p, expose port 27883 to allow remote connections from MQTT clients
+--privileged, allows Informix Server in Docker Engine to manage kernel configuration
+The default password for user informix is in4mix, for root access informix has sudo privileges.
+By specifying -e LICENSE=accept parameter, you are accepting this License to use the software contained in this image.
+
+The docker run command will perform a disk initialization for the Informix Database Server. When you exit this shell the server will be taken offline.
+
+After disk initialization of the Informix server you should start and stop the server with docker start/stop
+************
+
+container id : f86cab6dd68f
+
+2 - Start the Informix Docker container
+
+The docker start command will start the container and bring the database online. It will not perform a disk initialization. This command is used to start the container after a disk initialization has already occured, and the container is currently not running.
+
+docker start iif_developer_edition
+3 - Stop the Informix Docker container
+
+The docker stop command will stop the container and take the database offline.
+
+docker stop iif_developer_edition
+4 - To attach to the Informix Docker container (shell)
+
+docker exec -it iif_developer_edition bash
+5 - The following command will create a demo database stores_demo:
+
+$ /opt/IBM/informix/bin/dbaccessdemo
+6 - Need to know
+
+Informix is deployed in the Docker Engine in:
+
+    /opt/IBM/informix
+Informix database server name is set to dev by default
+
+docker start iif_developer_edition
+docker stop iif_developer_edition
+docker exec -it iif_developer_edition bash
+
+	#   user:            informix
+	#   password:        in4mix
+
+docker start iif_developer_edition
+
+
+docker inspect iif_developer_edition | grep '"IPAddress"' | head -n 1
+
+telnet 172.17.0.2 9088
+
+//////////
+Driver Classname:
+
+com.ddtek.jdbc.db2.DB2Driver
+
+Connection URL:
+
+DB2 for Linux/UNIX/Windows:
+
+jdbc:datadirect:db2://servername:port;DatabaseName=db_name
+////////
+
+******** SSO - SPI *********
+
+docker build -t mysso .
+
+docker run mysso:latest
+
+standalone.xml
+
+docker run --rm -it mysso:latest sh
+docker run --rm -it registry.access.redhat.com/redhat-sso-7/sso71-openshift:1.1 sh
+
+docker run --rm -it registry.access.redhat.com/redhat-sso-7/sso71-openshift:latest sh
+
+docker run --rm  mysso:latest ls -lrt  /opt/eap/standalone/configuration/standalone_xml_history/current
+docker run --user=root -P mysso:latest -- ls /opt/eap/standalone/configuration/standalone_xml_history/current
+docker run --rm  mysso:latest ls -lrt  /opt/eap/standalone/configuration/standalone_xml_history/current
+
+docker run --rm registry.access.redhat.com/redhat-sso-7/sso71-openshift:1.1
+docker run --rm registry.access.redhat.com/redhat-sso-7/sso71-openshift:1.2
+
