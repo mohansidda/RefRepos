@@ -1,0 +1,73 @@
+1. Create this folder and copy the jar file and create module.xml :
+
+➜ rh-sso-7.2 cd modules/com/informix/jdbc/main
+➜ main pwd
+/Users/ahermawa/Lab/rhsso/rh-sso-7.2/modules/com/informix/jdbc/main
+➜ main cat module.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="urn:jboss:module:1.0" name="com.informix.jdbc">
+<resources>
+<resource-root path="ifxjdbc.jar"/>
+</resources>
+<dependencies>
+<module name="javax.api"/>
+</dependencies>
+</module>% ➜ main
+➜ main ll
+total 1256
+-rw-r--r--@ 1 ahermawa staff 622K Sep 28 12:09 ifxjdbc.jar
+-rw-r--r--@ 1 ahermawa staff 266B Sep 28 12:08 module.xml
+➜ main
+
+2.  EAP_HOME/bin/jboss-cli.sh
+3. run this command :
+
+[standalone@localhost:9990 /] /subsystem=datasources/jdbc-driver=informix:add(driver-name=informix,driver-module-name=com.informix.jdbc,driver-class-name=com.informix.jdbc.IfxDriver)
+{"outcome" => "success"}
+
+[standalone@localhost:9990 /] cd subsystem=datasources
+[standalone@localhost:9990 subsystem=datasources] cd jdbc-driver=informix
+[standalone@localhost:9990 jdbc-driver=informix] :read-resource
+
+4. :reload
+5. test the DB connection from the management console.
+
+
+6. adding Datasource :(Ref the screen)
+
+in GUI click add : 
+Name:
+informixtest
+JNDI:
+java:/jdbc/informixtest
+Connection URL:
+jdbc:informix-sqli://localhost:9088/stores_demo:INFORMIXSERVER=informix
+
+once you run above datasource add commnad, you can see following stfull in  standalone-ha.xml or standalone.xml
+
+http://farnetworks.blogspot.com/2015/02/informix-uccx-driver-on-jboss-as71x.html
+
+--->
+
+                <datasource jta="false" jndi-name="java:/jdbc/informixtest" pool-name="informixtest" enabled="true" use-ccm="false">
+                    <connection-url>jdbc:informix-sqli://localhost:9088/stores_demo:INFORMIXSERVER=informix</connection-url>
+                    <driver-class>com.informix.jdbc.IfxDriver</driver-class>
+                    <driver>informix</driver>
+                    <security>
+                        <user-name>informix</user-name>
+                        <password>in4mix</password>
+                    </security>
+                </datasource>
+
+                <drivers>
+                    <driver name="h2" module="com.h2database.h2">
+                        <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
+                    </driver>
+                    <driver name="informix" module="com.informix.jdbc">
+                        <driver-class>com.informix.jdbc.IfxDriver</driver-class>
+                    </driver>
+                </drivers>
+            </datasources>
+
+
+----------------
