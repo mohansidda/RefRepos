@@ -1,4 +1,8 @@
 
+```
+These steps to deploy the 3scale (amp2.2) in a disconnected environment. 
+```
+
 export my_reg=docker-registry-default.13.251.251.251.nip.io
 export rh_reg=registry.access.redhat.com
 
