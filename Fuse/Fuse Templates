@@ -1,0 +1,37 @@
+Master//
+
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/master/quickstarts/karaf-camel-amq-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/openshift/openshift-ansible/master/roles/openshift_examples/files/examples/latest/xpaas-templates/karaf2-camel-amq-template.json
+								   
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/master/quickstarts/karaf-camel-log-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/master/quickstarts/karaf-camel-rest-sql-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/master/quickstarts/karaf-cxf-rest-template.json
+
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/master/quickstarts/spring-boot-camel-amq-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/master/quickstarts/spring-boot-camel-rest-sql-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/master/quickstarts/spring-boot-camel-drools-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/master/quickstarts/spring-boot-camel-infinispan-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/master/quickstarts/spring-boot-camel-teiid-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/master/quickstarts/spring-boot-camel-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/master/quickstarts/spring-boot-camel-xml-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/master/quickstarts/spring-boot-cxf-jaxrs-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/master/quickstarts/spring-boot-cxf-jaxws-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-openshift/application-templates/master/eap/eap71-basic-s2i.json
+GA//
+
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/karaf-camel-amq-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/karaf-camel-log-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/karaf-camel-rest-sql-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/karaf-cxf-rest-template.json
+
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/spring-boot-camel-template.json
+https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/spring-boot-camel-amq-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/spring-boot-camel-amq-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/spring-boot-camel-config-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/spring-boot-camel-drools-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/spring-boot-camel-infinispan-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/spring-boot-camel-rest-sql-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/spring-boot-camel-teiid-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/spring-boot-camel-xml-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/spring-boot-cxf-jaxrs-template.json
+oc replace --force -n openshift -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/spring-boot-cxf-jaxws-template.json
