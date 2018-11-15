@@ -1,7 +1,7 @@
 
-```
-These steps to deploy the 3scale (amp2.2) in a disconnected environment. 
-```
+
+## These steps to deploy the 3scale (amp2.2) in a disconnected environment. 
+
 ### Create environment variables 
 ```
 export my_reg=docker-registry-default.13.251.251.251.nip.io   
