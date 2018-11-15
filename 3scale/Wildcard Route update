@@ -1,6 +1,6 @@
 Before running the steps check the OCP version it should be openshift v3.9.33 or above. 
 
-Steps : 
+# Steps : 
 ````	
 oc project default
 oc adm router --replicas=0 
