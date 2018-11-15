@@ -1,9 +1,11 @@
 Before running the steps check the OCP version it should be openshift v3.9.33 or above. 
 
 
+
+ ## Steps : 
+ 
 ```
- Steps : 
-````	
+
 oc project default
 oc adm router --replicas=0 
 oc set env dc/router ROUTER_ALLOW_WILDCARD_ROUTES=true
@@ -16,8 +18,8 @@ oc export route apicast-wildcard-router -o yaml > wildcard-router.yml
            b. change the wildcardPolicy like :
 	      wildcardPolicy: Subdomain
 
-       7. oc delete -f wildcard-router.yml
-       8. oc apply -f wildcard-router.yml
+        oc delete -f wildcard-router.yml
+       oc apply -f wildcard-router.yml
 ````	
 If you see the <3scale project>  routes, you can observe something * added in the hostname. 
 
