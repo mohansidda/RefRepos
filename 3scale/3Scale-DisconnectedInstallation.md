@@ -72,19 +72,17 @@ oc import-image  postgresql-95-rhel7:9.5 --from=172.30.1.1:5000/3scale-prd/postg
 oc import-image  amp-zync:latest --from=172.30.1.1:5000/3scale-prd/zync:1.6 -n 3scale-prd --confirm --insecure
 oc import-image  redis-32-rhel7:3.2 --from=172.30.1.1:5000/3scale-prd/redis-32-rhel7:3.2 -n 3scale-prd --confirm --insecure
 oc import-image  mysql-57-rhel7:5.7-5 --from=172.30.1.1:5000/3scale-prd/mysql-57-rhel7:5.7-5 -n 3scale-prd --confirm --insecure
-
 ```
+
 #### Step 5 : Change the amp.yml 
-````
+```
 1. vi amp.yml
 2.replace registry.access.redhat.com with your registry. you can run sed :-
 :%s/registry.access.redhat.com/172.30.1.1:5000/g
 3.save changes
-
 ```
+
 #### Step 6 : Deploy 3Scale 
 ```
-
 oc new-app --file amp.yml --param TENANT_NAME=<prd-3scale> --param WILDCARD_DOMAIN=<OCP Wildcard Domain>
-
 ```
