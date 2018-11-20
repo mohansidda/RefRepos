@@ -36,7 +36,7 @@ https://api-3scale-apicast-staging.uat.13.251.251.251.nip.io:443
 https://api-3scale-apicast-production.uat.13.251.251.251.nip.io:443
 
 Sample 3Scale - Staging and Production Base URL's : 
-![alt text](https://github.com/mohansidda/RefRepos/blob/master/3scale/Sample-URL.png "Sample URL's ")
+![alt text](https://github.com/mohansidda/RefRepos/blob/master/3scale/staging-productionURL.png "Sample URL's ")
 
 
 This means. you can keep the service name and environment in * place after that *.<wildcard domain > has to be standard and consistent for all the new services. 
