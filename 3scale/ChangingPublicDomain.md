@@ -20,9 +20,13 @@ a = Account.find_by_self_domain '3scale-admin.13.251.251.251.nip.io'
 a.self_domain = 'UAT-3Scale-admin.13.251.251.251.nip.io'
 a.save!
 ```
+##### update the system-provider route
+````
+OCP Routes --> update the system-provider-admin route. sync <TENANT_NAME> as per the self_domain.
+exampe : https://UAT-3scale-admin.13.251.251.251.nip.io 
+````
 
-
-#### Developer Portal :
+### Developer Portal :
 ```
 oc rsh -c system-developer <system-app POD>
 
@@ -34,3 +38,7 @@ a.save!
 a = Account.find_by_domain '3scale.13.251.251.251.nip.io'
 a.domain = 'UAT-3Scale.13.251.251.251.nip.io'
 ```
+##### update the system-developer route
+````
+OCP Routes --> update the system-developer route. sync <TENANT_NAME> as per the self_domain.
+exampe : https://UAT-3scale.13.251.251.251.nip.io 
