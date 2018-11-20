@@ -14,7 +14,8 @@ oc project <3scale project>
 oc export route apicast-wildcard-router -o yaml > wildcard-router.yml
            make following change spec : 
             a. add wildcard in front of the existing host value like : 
-	    host: wildcard.apicast-wildcard.${WILDCARD_DOMAIN}
+	    host: apicast-wildcard.<teneant(or)env>.${WILDCARD_DOMAIN}
+	    ex : apicast-wildcard.uat.13.251.251.251.nip.io
            b. change the wildcardPolicy like :
 	      wildcardPolicy: Subdomain
 
@@ -30,9 +31,9 @@ Sample Wildcrd route :
 Once you configure the wildcard router to accept *.apicast-wildcard.13.251.251.251.nip.io
 you don't need to create any routes for new 3Sacale services. However, you need to keep your staging and production URL's similar to this : 
 
-https://hello-world-staging.apicast-wildcard.13.251.251.251.nip.io:443
+https://api-3scale-apicast-staging.uat.13.251.251.251.nip.io:443
 
-https://hello-world-production.apicast-wildcard.13.251.251.251.nip.io:443
+https://api-3scale-apicast-production.uat.13.251.251.251.nip.io:443
 
 Sample 3Scale - Staging and Production Base URL's : 
 ![alt text](https://github.com/mohansidda/RefRepos/blob/master/3scale/Sample-URL.png "Sample URL's ")
