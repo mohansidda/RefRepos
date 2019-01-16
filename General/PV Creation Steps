@@ -1,0 +1,78 @@
+1. Create User : 
+```
+sudo useradd nfsnobody
+sudo passwd nfsnobody
+```
+< You may see that nfsnobody already exist. In this case skip step #1>
+
+2. Create Directory 
+```
+mkdir /nfsvolumes/
+cd /nfsvolumes/
+```
+3. Create new directory
+
+``` mkdir sso-mysql-claim ```
+
+4. Change Permission and Owner
+```
+sudo chown nfsnobody:nfsnobody sso-mysql-claim
+sudo chmod 777  sso-mysql-claim
+```
+
+5. #Edit exports definition and add(upend) new pv04 Directory
+```
+sudo vi /etc/exports
+
+/nfsvolumes/sso-mysql-claim *(rw,root_squash)
+```
+6. #Restart NFS Service
+````
+sudo systemctl restart nfs
+````
+
+7. Create a sso-mysql-pv.json file like this ;
+
+{
+    "kind": "PersistentVolume",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "sso-mysql-claim",
+        "creationTimestamp": null,
+        "annotations": {
+            "pv.kubernetes.io/bound-by-controller": "yes"
+        }
+    },
+    "spec": {
+        "capacity": {
+            "storage": "1Gi"
+        },
+        "nfs": {
+            "server": "localhost",
+            "path": "/nfsvolumes/sso-mysql-claim"
+        },
+        "accessModes": [
+            "ReadWriteOnce",
+            "ReadWriteMany"
+        ],
+        "claimRef": {
+            "kind": "PersistentVolumeClaim",
+            "namespace": "rh-sso",
+            "name": "rh-sso",
+            "uid": "20be24bd-29fc-11e7-bcff-0054002dd172",
+            "apiVersion": "v1",
+            "resourceVersion": "109769"
+        },
+        "persistentVolumeReclaimPolicy": "Recycle"
+    },
+    "status": {}
+}
+
+8 . #login as admin/admin
+oc login https://<host/IP> -u system:admin
+
+9 #move project rh-sso
+$ oc project rh-sso
+
+10 #apply json file
+ oc create -f sso-mysql-pv.json
